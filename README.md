@@ -1,23 +1,19 @@
-# Öğrenci Performans Faktörleri - Veri Madenciliği Projesi
+# Öğrenci Performans Faktörleri Sınıflandırma Analizi
 
-Bu proje, BLM308 Veri Madenciliği dersi final ödevi kapsamında geliştirilmiş uçtan uca bir makine öğrenmesi uygulamasıdır. Projede CRISP-DM metodolojisi takip edilmiştir.
+Bu proje, öğrencilerin çalışma alışkanlıkları, sosyo-ekonomik durumları ve aile faktörleri gibi verileri kullanarak akademik başarılarını (Riskli/Başarılı) önceden tahmin etmeyi amaçlayan bir Veri Madenciliği (Data Mining) çalışmasıdır. Proje süreçleri endüstri standardı olan CRISP-DM metodolojisine uygun olarak yürütülmüştür.
 
-## Projenin Amacı
-Okul yönetiminin, öğrencilerin performans faktörlerini (çalışma saati, uyku, aile ilgisi vb.) analiz ederek, risk altındaki öğrencileri sınavlar yapılmadan önce tespit etmesini sağlayan 3 farklı yapay zeka modelinin karşılaştırılmasıdır. 
+## Kullanılan Teknolojiler ve Algoritmalar
+* **Dil & Kütüphaneler:** Python (Pandas, Scikit-Learn, Matplotlib, Seaborn)
+* **Veri Ön İşleme:** Imputation (Mod), One-Hot Encoding, StandardScaler
+* **Makine Öğrenmesi Modelleri:** Lojistik Regresyon, Random Forest, Çok Katmanlı Sinir Ağı (MLP)
+* **Optimizasyon:** GridSearchCV (Hiperparametre optimizasyonu)
+* **Değerlendirme:** 10-Fold Cross-Validation, Confusion Matrix, Accuracy, F1-Score, ROC-AUC
 
-## Klasör Yapısı
-* `StudentPerformanceFactors (1).csv`: Kaggle üzerinden elde edilen ham veri seti.
-* `Temizlenmis_Ogrenci_Verisi.csv`: Mod ile eksik verileri doldurulmuş ve One-Hot Encoding uygulanmış, makine öğrenmesine hazır veri seti.
-* `veri_hazirligi.py`: Veri ön işleme ve temizleme adımlarını içeren Python betiği.
-* `modelleme.py`: Modellerin kurulduğu, Cross-Validation (Çapraz Doğrulama) ve performans metriklerinin hesaplandığı ana dosya.
+## Proje Çıktıları
+Yapılan 10-Fold Cross-Validation testleri sonucunda en yüksek performansı **Lojistik Regresyon** (%98.03 Doğruluk, %99.51 ROC-AUC) göstermiştir. Random Forest modelindeki olası ezberleme (Overfitting - Yüksek Varyans) sorunları Bias-Variance ikilemi üzerinden incelenmiş ve raporlanmıştır.
 
-## Kullanılan Modeller ve Sonuçlar
-Veri seti 10-Fold Cross Validation ile test edilmiş ve aşağıdaki doğruluk (Accuracy) oranları elde edilmiştir:
-1. **Lojistik Regresyon:** %98.03 
-2. **MLP (Çok Katmanlı Sinir Ağı):** %96.76
-3. **Random Forest:** %89.90
-
-## Nasıl Çalıştırılır?
-1. Repoyu bilgisayarınıza klonlayın.
-2. Gerekli kütüphaneleri yükleyin: `pip install pandas scikit-learn`
-3. Sırasıyla `veri_hazirligi.py` ve `modelleme.py` dosyalarını çalıştırın.
+## Repo İçeriği
+* `modelleme.py` ve `eda_grafikleri.py`: Veri işleme, model eğitimi ve görselleştirme kodları.
+* `Temizlenmis_Ogrenci_Verisi.csv`: Modele hazır hale getirilmiş, encode ve scale edilmiş veri seti.
+* `*.png` dosyaları: Keşifçi Veri Analizi (EDA) ve Confusion Matrix çıktıları.
+* `veri_madenciligi_final_projesi.pdf`: LaTeX ile yazılmış kapsamlı 13 sayfalık akademik final raporu.
