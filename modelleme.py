@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed May 13 00:31:07 2026
-
-@author: öz
-"""
-
 import pandas as pd
 import warnings
 from sklearn.model_selection import cross_validate, GridSearchCV
@@ -96,4 +89,4 @@ plt.title("Lojistik Regresyon - Karmaşıklık Matrisi (Hata Analizi)")
 plt.savefig("confusion_matrix.png") # Resmi masaüstüne kaydeder
 plt.show()
 
-print("✅ 'confusion_matrix.png' başarıyla kaydedildi! Overleaf'e yükleyebilirsiniz.")
+print("✅ 'confusion_matrix.png' başarıyla kaydedildi! ")
