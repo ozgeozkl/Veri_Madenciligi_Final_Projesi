@@ -89,4 +89,4 @@ plt.title("Lojistik Regresyon - Karmaşıklık Matrisi (Hata Analizi)")
 plt.savefig("confusion_matrix.png") # Resmi masaüstüne kaydeder
 plt.show()
 
-print("✅ 'confusion_matrix.png' başarıyla kaydedildi! Overleaf'e yükleyebilirsiniz.")
+print("✅ 'confusion_matrix.png' başarıyla kaydedildi!")
