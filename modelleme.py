@@ -1,13 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed May 13 00:31:07 2026
-
-@author: öz
-"""
-
 import pandas as pd
 import warnings
-from sklearn.model_selection import cross_validate
+from sklearn.model_selection import cross_validate, GridSearchCV
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
@@ -27,23 +20,37 @@ y = df_encoded['Target_Success']
 X = df_encoded.drop('Target_Success', axis=1)
 
 # 3. Veri Ölçeklendirme (Standardizasyon)
-# MLP ve Lojistik Regresyon gibi modellerin matematiğinin bozulmaması için
-# tüm sayıları (çalışma saati, uyku saati vb.) aynı ölçeğe getiriyoruz.
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-# 4. Yönergede İstenen 3 Modeli Tanımlama
+# 4. GridSearchCV ile Random Forest Optimizasyonu
+print("\n🔍 Random Forest için GridSearchCV ile en iyi parametreler aranıyor...")
+print("(Bu işlem bilgisayarın hızına göre birkaç saniye sürebilir, lütfen bekleyin...)")
+
+# Modeli en iyi ayarlarla bulmak için bir arama uzayı (param_grid) tanımlıyoruz
+rf_parametreleri = {
+    'n_estimators': [50, 100],
+    'max_depth': [None, 10]
+}
+
+# 5-Fold Cross Validation ile en iyi parametreleri arıyoruz
+grid_search = GridSearchCV(RandomForestClassifier(random_state=42), rf_parametreleri, cv=5, scoring='accuracy')
+grid_search.fit(X_scaled, y)
+en_iyi_rf = grid_search.best_estimator_
+
+print(f"✅ En İyi Parametreler Bulundu: {grid_search.best_params_}\n")
+
+# 5. Yönergede İstenen Modelleri Tanımlama (Artık Optimize Edilmiş RF kullanıyoruz)
 modeller = {
     "Lojistik Regresyon": LogisticRegression(random_state=42, max_iter=1000),
-    "Random Forest (Rastgele Orman)": RandomForestClassifier(random_state=42, n_estimators=100),
+    "Random Forest (GridSearch Optimize Edilmiş)": en_iyi_rf,
     "MLP (Çok Katmanlı Sinir Ağı)": MLPClassifier(random_state=42, hidden_layer_sizes=(50,), max_iter=500)
 }
 
-# 5. Modelleri 10-Fold Cross Validation ile Test Etme
+# 6. Modelleri 10-Fold Cross Validation ile Test Etme
 istenen_metrikler = ['accuracy', 'f1', 'roc_auc']
 
-print("\n2. Modeller 10-Fold Cross-Validation ile yarışa başlıyor!")
-print("(Bu işlem bilgisayarın hızına göre 10-30 saniye sürebilir, lütfen bekleyin...)\n")
+print("2. Modeller 10-Fold Cross-Validation ile yarışa başlıyor!")
 print("-" * 50)
 
 for isim, model in modeller.items():
@@ -62,4 +69,24 @@ for isim, model in modeller.items():
     print(f"   ROC-AUC             : %{ortalama_roc_auc * 100:.2f}")
     print("-" * 50)
     
-print("\nİşlem Başarıyla Tamamlandı! Bu sonuçları raporunuza ekleyebilirsiniz.")
+print("\nİşlem Başarıyla Tamamlandı! Bu ekranın görüntüsünü 'gridsearch.png' adıyla kaydedip Overleaf'e yükleyebilirsiniz.")
+
+from sklearn.model_selection import cross_val_predict
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
+
+print("\n📊 Şampiyon Model (Lojistik Regresyon) için Confusion Matrix çizdiriliyor...")
+# Lojistik Regresyonun 10-Fold CV üzerindeki tahminlerini alıyoruz
+y_tahmin = cross_val_predict(modeller["Lojistik Regresyon"], X_scaled, y, cv=10)
+
+# Matrisi oluşturup çizdiriyoruz
+cm = confusion_matrix(y, y_tahmin)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Riskli (0)', 'Başarılı (1)'])
+
+plt.figure(figsize=(6,6))
+disp.plot(cmap='Blues', values_format='d')
+plt.title("Lojistik Regresyon - Karmaşıklık Matrisi (Hata Analizi)")
+plt.savefig("confusion_matrix.png") # Resmi masaüstüne kaydeder
+plt.show()
+
+print("✅ 'confusion_matrix.png' başarıyla kaydedildi! Overleaf'e yükleyebilirsiniz.")
